@@ -2,11 +2,16 @@ const users = []
 
 // addUser, removeUser, getUser, getUsersInRoom
 
-const addUser = ({id, username, room}) => {
+const addUser = ({id, username = '', room = ''}) => {
 
   // Clean the data
-  username = username.trim().toLowerCase()
-  room = room.trim().toLowerCase()
+  try {
+    username = username.trim().toLowerCase()
+    room = room.trim().toLowerCase()
+} catch (e) {
+    username = null
+    room = null
+}
 
   // Validate the data
   if(!username || !room) {
@@ -37,7 +42,7 @@ const addUser = ({id, username, room}) => {
   const user = { id, username, room}
 
   users.push(user)
-  return(user)
+  return {user}
 
 }
 
@@ -51,12 +56,11 @@ const removeUser = (id) => {
 
 const getUser = (id) => {
   return users.find((user) => user.id === id)
-
-
 }
 
 const getUsersInRoom = (room) => {
 
+ room = room.trim().toLowerCase()
  return users.filter((user) => user.room === room) 
 
   }

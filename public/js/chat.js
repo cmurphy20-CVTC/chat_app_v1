@@ -15,13 +15,18 @@ const $messages = document.querySelector('#messages');
 const messageTemplate = document.querySelector('#message-template').innerHTML;
 const locationMessageTemplate = document.querySelector('#location-message-template').innerHTML;
 
-const {username, room} = Qs.parse(location.search, {ignoreQueryPrefix: true})
+ const {username, room} = Qs.parse(location.search, {ignoreQueryPrefix: true})
+
+// const options = location.search.split("=");
+// const username = options[1].split("&")[0];
+// const room = options[2];
 
 socket.on('message', (message) => {
   console.log(message);
 
   const html = Mustache.render(messageTemplate, 
     {
+      username: message.username,
       message: message.text,
       createdAt: moment(message.createdAt).format("h:mm a")
 
@@ -34,6 +39,7 @@ socket.on('message', (message) => {
 socket.on('locationMessage', (message) => {
   console.log(message);
   const html = Mustache.render(locationMessageTemplate, {
+    username: message.username,
     createdAt: moment(message.createdAt).format("h:mm a"),
     url: message.url
   })
@@ -44,7 +50,7 @@ messageForm.addEventListener("submit", (e) => {
 
   e.preventDefault();
 
-  messageForm.setAttribute('disbaled', 'disabled');
+  messageForm.setAttribute('disabled', 'disabled');
   
   const message = e.target.elements.message.value;
 
@@ -82,4 +88,10 @@ sendLocationButton.addEventListener('click', () => {
   })
 })
 
-socket.emit('join', {username, room})
+socket.emit('join', {username, room}, (error) => {
+
+  if (error) {
+  alert(error)
+  location.href= '/'
+}
+})
